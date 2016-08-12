@@ -15,7 +15,7 @@ class BadRequestException extends \RuntimeException
     private $requestMessage;
 
     /**
-     * @param mixed         $requestCode
+     * @param mixed           $requestCode
      * @param string          $requestMessage
      * @param \Exception|null $prev
      */

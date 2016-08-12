@@ -48,10 +48,10 @@ class ServiceClient implements ServiceClientInterface
     private $badResponseExceptionParser;
 
     /**
-     * @param string  $specificationFile
-     * @param array   $config
-     * @param string  $cacheDir
-     * @param boolean $debug
+     * @param string $specificationFile
+     * @param array  $config
+     * @param string $cacheDir
+     * @param bool   $debug
      */
     public function __construct($specificationFile, array $config = [], $cacheDir = null, $debug = false)
     {

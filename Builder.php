@@ -172,7 +172,7 @@ class Builder
 
                     // if no ifCode property then return exception
                     if (!$error['ifCode']) {
-                        $responseMessage = $this->getErrorMessage($body, $error,$response);
+                        $responseMessage = $this->getErrorMessage($body, $error, $response);
 
                         return new BadResponseException(
                             $responseCode,
@@ -188,7 +188,7 @@ class Builder
                 }
 
                 if ($error['ifCode'] == $responseCode) {
-                    $responseMessage = $this->getErrorMessage($body, $error,$response);
+                    $responseMessage = $this->getErrorMessage($body, $error, $response);
 
                     return new BadResponseException(
                         $responseCode,
@@ -228,11 +228,12 @@ class Builder
     }
 
     /**
-     * Get error message from posible field
+     * Get error message from posible field.
      *
-     * @param  array             $body
-     * @param  array             $error
-     * @param  ResponseInterface $response
+     * @param array             $body
+     * @param array             $error
+     * @param ResponseInterface $response
+     *
      * @return string
      */
     private function getErrorMessage(array $body, array $error, ResponseInterface $response)
@@ -249,12 +250,13 @@ class Builder
     }
 
     /**
-     * Transform and match data with shape
+     * Transform and match data with shape.
      *
-     * @param  CommandInterface $command
-     * @param array $datas
-     * @param  array            $operation
-     * @param  string           $action
+     * @param CommandInterface $command
+     * @param array            $datas
+     * @param array            $operation
+     * @param string           $action
+     *
      * @return array
      */
     private function transformData(CommandInterface $command, array $datas, array $operation, $action)
@@ -296,14 +298,15 @@ class Builder
     }
 
     /**
-     * Create request/response data and add validation rule
+     * Create request/response data and add validation rule.
      *
-     * @param  Validator $validator
-     * @param  array     $datas
-     * @param  array     $shape
-     * @param  string    $path
-     * @param  string    $action
-     * @param  array     &$result
+     * @param Validator $validator
+     * @param array     $datas
+     * @param array     $shape
+     * @param string    $path
+     * @param string    $action
+     * @param array     &$result
+     *
      * @return array
      */
     private function createData(
@@ -398,11 +401,12 @@ class Builder
     }
 
     /**
-     * Get formatted value
+     * Get formatted value.
      *
-     * @param  mixed $value     [description]
-     * @param  array  $parameter [description]
-     * @param  string $action    request/response
+     * @param mixed  $value     [description]
+     * @param array  $parameter [description]
+     * @param string $action    request/response
+     *
      * @return mixed
      */
     private function getFormatedValue($value, array $parameter, $action)
@@ -441,7 +445,7 @@ class Builder
             case 'datetime':
                 if ('request' === $action) {
                     if (!$value) {
-                        return null;
+                        return;
                     }
 
                     if (!($value instanceof \DateTime)) {
@@ -462,7 +466,7 @@ class Builder
                 }
                 break;
             default:
-                return null;
+                return;
                 break;
         }
     }

@@ -19,7 +19,7 @@ class BadResponseException extends BaseBadResponseException
     private $responseMessage;
 
     /**
-     * @param mixed                 $responseCode
+     * @param mixed                  $responseCode
      * @param string                 $responseMessage
      * @param string                 $message
      * @param RequestInterface       $request

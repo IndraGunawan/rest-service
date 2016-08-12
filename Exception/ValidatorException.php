@@ -15,8 +15,8 @@ class ValidatorException extends \RuntimeException
     private $errorMessage;
 
     /**
-     * @param string     $field
-     * @param string     $errorMessage
+     * @param string          $field
+     * @param string          $errorMessage
      * @param \Exception|null $prev
      */
     public function __construct($field, $errorMessage, \Exception $prev = null)

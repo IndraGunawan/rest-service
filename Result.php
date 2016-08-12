@@ -34,8 +34,9 @@ class Result extends BaseResult
     /**
      * Check if the result has a header by name.
      *
-     * @param  string  $name
-     * @return boolean
+     * @param string $name
+     *
+     * @return bool
      */
     public function hasHeader($name)
     {
@@ -44,7 +45,9 @@ class Result extends BaseResult
 
     /**
      * Get an header of the result by name.
-     * @param  string $name
+     *
+     * @param string $name
+     *
      * @return mixed|null
      */
     public function getHeader($name)
@@ -53,6 +56,6 @@ class Result extends BaseResult
             return $this->getHeaders()[$name];
         }
 
-        return null;
+        return;
     }
 }

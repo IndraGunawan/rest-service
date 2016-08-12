@@ -12,10 +12,10 @@ class Service implements ServiceInterface
     private $service;
 
     /**
-     * @param string  $specificationFile
-     * @param array   $defaults
-     * @param string  $cacheDir
-     * @param boolean $debug
+     * @param string $specificationFile
+     * @param array  $defaults
+     * @param string $cacheDir
+     * @param bool   $debug
      */
     public function __construct($specificationFile, array $defaults = [], $cacheDir = null, $debug = false)
     {
