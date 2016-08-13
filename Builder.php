@@ -31,16 +31,19 @@ class Builder
     /**
      * Transform command to request.
      *
-     * @return Request
+     * @return \Closure
      */
     public function commandToRequestTransformer()
     {
         return function (CommandInterface $command) {
             if (!$this->service->hasOperation($command->getName())) {
-                throw new CommandException(sprintf(
-                    'Command "%s" not found',
-                    $command->getName()
-                ));
+                throw new CommandException(
+                    sprintf(
+                        'Command "%s" not found',
+                        $command->getName()
+                    ),
+                    $command
+                );
             }
 
             $operation = $this->service->getOperation($command->getName());
@@ -85,7 +88,7 @@ class Builder
     /**
      * Transform response to result.
      *
-     * @return Result
+     * @return \Closure
      */
     public function responseToResultTransformer()
     {
@@ -139,7 +142,7 @@ class Builder
     private function processResponseError(
         array $operation,
         RequestInterface $request,
-        ResponseInterface $response,
+        ResponseInterface $response = null,
         GuzzleBadResponseException $e = null
     ) {
         $body = null;
@@ -157,9 +160,6 @@ class Builder
                 );
             }
         }
-
-        $responseCode = 0;
-        $responseMessage = '';
 
         if ($body) {
             foreach ($operation['errors'] as $name => $error) {
@@ -270,7 +270,6 @@ class Builder
 
         $validator = new Validator();
 
-        $shape = [];
         if (isset($operation[$action])) {
             $shape = $operation[$action];
         } else {
@@ -418,18 +417,14 @@ class Builder
         switch ($parameter['type']) {
             case 'integer':
                 return (int) (string) $value;
-                break;
             case 'float':
                 return (float) (string) $value;
-                break;
             case 'string':
                 $result = (string) $value;
 
                 return sprintf($parameter['format'] ?: '%s', $result);
-                break;
             case 'boolean':
                 return ($value === 'true' || true === $value) ? true : false;
-                break;
             case 'number':
                 if ($parameter['format']) {
                     $format = explode('|', $parameter['format']);
@@ -441,7 +436,6 @@ class Builder
                 }
 
                 return (string) $value;
-                break;
             case 'datetime':
                 if ('request' === $action) {
                     if (!$value) {
@@ -464,10 +458,8 @@ class Builder
                         return new \DateTime($value);
                     }
                 }
-                break;
             default:
                 return;
-                break;
         }
     }
 }
