@@ -53,7 +53,7 @@ class ServiceClient implements ServiceClientInterface
      * @param string $cacheDir
      * @param bool   $debug
      *
-     * @throws InvalidSpecificationException
+     * @throws \IndraGunawan\RestService\Exception\InvalidSpecificationException
      */
     public function __construct($specificationFile, array $config = [], $cacheDir = null, $debug = false)
     {
@@ -174,9 +174,9 @@ class ServiceClient implements ServiceClientInterface
      * @param string $name Name of the command to execute.
      * @param array  $args Arguments to pass to the getCommand method.
      *
-     * @throws BadRequestException
-     * @throws BadResponseException
-     * @throws CommandException
+     * @throws \IndraGunawan\RestService\Exception\BadRequestException
+     * @throws \IndraGunawan\RestService\Exception\BadResponseException
+     * @throws \IndraGunawan\RestService\Exception\CommandException
      *
      * @return ResultInterface|PromiseInterface
      *
@@ -197,9 +197,9 @@ class ServiceClient implements ServiceClientInterface
     /**
      * Defines the main handler for commands that uses the HTTP client.
      *
-     * @throws BadRequestException
-     * @throws BadResponseException
-     * @throws CommandException
+     * @throws \IndraGunawan\RestService\Exception\BadRequestException
+     * @throws \IndraGunawan\RestService\Exception\BadResponseException
+     * @throws \IndraGunawan\RestService\Exception\CommandException
      *
      * @return callable
      */

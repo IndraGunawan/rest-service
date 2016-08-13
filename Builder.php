@@ -48,7 +48,7 @@ class Builder
 
             $operation = $this->service->getOperation($command->getName());
 
-            $result = $this->transformData($command, $command->toArray(), $operation, 'request');
+            $result = $this->transformData($command, $command->toArray(), $operation ?: [], 'request');
 
             $uri = ltrim($operation['requestUri'], '/');
             if ($result['uri']) {
@@ -98,7 +98,7 @@ class Builder
             CommandInterface $command
         ) {
             $operation = $this->service->getOperation($command->getName());
-            $this->processResponseError($operation, $request, $response);
+            $this->processResponseError($operation ?: [], $request, $response);
 
             $body = [];
             if ('rest_json' === $operation['responseProtocol']) {
@@ -121,7 +121,7 @@ class Builder
             $operation = $this->service->getOperation($command->getName());
 
             return $this->processResponseError(
-                $operation,
+                $operation ?: [],
                 $e->getRequest(),
                 $e->getResponse(),
                 $e
@@ -148,7 +148,7 @@ class Builder
         $body = null;
         if ('rest_json' === $operation['responseProtocol']) {
             try {
-                $body = GuzzleHttp\json_decode($response->getBody(), true);
+                $body = GuzzleHttp\json_decode((!is_null($response)) ? $response->getBody() : '', true);
             } catch (\InvalidArgumentException $ex) {
                 return new BadResponseException(
                     '',
@@ -230,13 +230,13 @@ class Builder
     /**
      * Get error message from posible field.
      *
-     * @param array             $body
-     * @param array             $error
-     * @param ResponseInterface $response
+     * @param array                  $body
+     * @param array                  $error
+     * @param ResponseInterface|null $response
      *
      * @return string
      */
-    private function getErrorMessage(array $body, array $error, ResponseInterface $response)
+    private function getErrorMessage(array $body, array $error, ResponseInterface $response = null)
     {
         $message = $this->parseError($body, $error['messageField']);
         if (!$message) {
@@ -458,6 +458,7 @@ class Builder
                         return new \DateTime($value);
                     }
                 }
+                //
             default:
                 return;
         }

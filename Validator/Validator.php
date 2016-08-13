@@ -8,7 +8,7 @@ use Sirius\Validation\Validator as SiriusValidator;
 class Validator
 {
     /**
-     * @var Validator
+     * @var \Sirius\Validation\Validator
      */
     private $validator;
 

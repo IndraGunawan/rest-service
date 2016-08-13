@@ -7,7 +7,7 @@ use IndraGunawan\RestService\Parser\SpecificationParser;
 class Service implements ServiceInterface
 {
     /**
-     * @var ServiceInterface
+     * @var array
      */
     private $service;
 
@@ -17,7 +17,7 @@ class Service implements ServiceInterface
      * @param string $cacheDir
      * @param bool   $debug
      *
-     * @throws InvalidSpecificationException
+     * @throws \IndraGunawan\RestService\Exception\InvalidSpecificationException
      */
     public function __construct($specificationFile, array $defaults = [], $cacheDir = null, $debug = false)
     {

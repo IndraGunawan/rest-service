@@ -19,7 +19,7 @@ class SpecificationParser
      * @param string $cacheDir
      * @param bool   $debug
      *
-     * @throws InvalidSpecificationException
+     * @throws \IndraGunawan\RestService\Exception\InvalidSpecificationException
      *
      * @return array
      */
