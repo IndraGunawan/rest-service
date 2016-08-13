@@ -52,6 +52,8 @@ class ServiceClient implements ServiceClientInterface
      * @param array  $config
      * @param string $cacheDir
      * @param bool   $debug
+     *
+     * @throws InvalidSpecificationException
      */
     public function __construct($specificationFile, array $config = [], $cacheDir = null, $debug = false)
     {
@@ -172,6 +174,10 @@ class ServiceClient implements ServiceClientInterface
      * @param string $name Name of the command to execute.
      * @param array  $args Arguments to pass to the getCommand method.
      *
+     * @throws BadRequestException
+     * @throws BadResponseException
+     * @throws CommandException
+     *
      * @return ResultInterface|PromiseInterface
      *
      * @see \GuzzleHttp\Command\ServiceClientInterface::getCommand
@@ -190,6 +196,10 @@ class ServiceClient implements ServiceClientInterface
 
     /**
      * Defines the main handler for commands that uses the HTTP client.
+     *
+     * @throws BadRequestException
+     * @throws BadResponseException
+     * @throws CommandException
      *
      * @return callable
      */

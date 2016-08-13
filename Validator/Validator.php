@@ -53,7 +53,7 @@ class Validator
      *
      * @return bool
      */
-    public function isValid(array $datas = [])
+    public function isValid()
     {
         return $this->validate($this->datas);
     }
@@ -101,10 +101,7 @@ class Validator
      */
     public function getMessages()
     {
-        $message = $this->validator->getMessages();
-        $this->validator->clearMessages();
-
-        return $message;
+        return $this->validator->getMessages();
     }
 
     /**

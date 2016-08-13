@@ -19,6 +19,8 @@ class SpecificationParser
      * @param string $cacheDir
      * @param bool   $debug
      *
+     * @throws InvalidSpecificationException
+     *
      * @return array
      */
     public function parse($specificationFile, array $defaults = [], $cacheDir = null, $debug = true)

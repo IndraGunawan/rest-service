@@ -16,6 +16,8 @@ class Service implements ServiceInterface
      * @param array  $defaults
      * @param string $cacheDir
      * @param bool   $debug
+     *
+     * @throws InvalidSpecificationException
      */
     public function __construct($specificationFile, array $defaults = [], $cacheDir = null, $debug = false)
     {
