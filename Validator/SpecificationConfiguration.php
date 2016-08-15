@@ -336,6 +336,7 @@ class SpecificationConfiguration implements ConfigurationInterface
 
     private function addErrorShapeSection(ArrayNodeDefinition $rootNode, $fromOperation = true)
     {
+        $availableOperators = ['===', '!==', '==', '!=', '<', '<=', '>=', '>'];
         $rootNode
             ->beforeNormalization()
                 ->always(function ($v) use ($fromOperation) {
@@ -379,7 +380,7 @@ class SpecificationConfiguration implements ConfigurationInterface
                         ->thenInvalid('Invalid error type %s, Available error types are "httpStatusCode", "field"')
                     ->end() // validate
                 ->end() // type
-                ->scalarNode('codeField')
+                ->scalarNode('codeField') // if type = field
                     ->cannotBeEmpty()
                     ->defaultNull()
                 ->end() // codeField
@@ -387,6 +388,14 @@ class SpecificationConfiguration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultNull()
                 ->end() // ifCode
+                ->scalarNode('operator')
+                    ->cannotBeEmpty()
+                    ->defaultValue('==')
+                    ->validate()
+                        ->ifNotInArray($availableOperators)
+                        ->thenInvalid('Invalid operator type %s, Available operators are "'.implode('", "', $availableOperators).'"')
+                    ->end() // validate
+                ->end() // operator
                 ->scalarNode('messageField')
                     ->cannotBeEmpty()
                     ->defaultNull()

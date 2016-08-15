@@ -268,12 +268,14 @@ class ServiceClient implements ServiceClientInterface
      * @param CommandInterface     $command
      * @param BadResponseException $e
      *
-     * @return BadResponseException
+     * @throws \IndraGunawan\RestService\Exception\BadResponseException
+     *
+     * @return void
      */
     private function parseBadResponseException(CommandInterface $command, BadResponseException $e)
     {
         $parser = $this->badResponseExceptionParser;
 
-        return $parser($command, $e);
+        $parser($command, $e);
     }
 }

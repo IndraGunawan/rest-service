@@ -40,12 +40,12 @@ class BadResponseException extends BaseBadResponseException
         parent::__construct($message, $request, $response, $previous);
     }
 
-    public function getstatusCode()
+    public function getStatusCode()
     {
         return $this->responseCode;
     }
 
-    public function getstatusMessage()
+    public function getStatusMessage()
     {
         return $this->responseMessage;
     }

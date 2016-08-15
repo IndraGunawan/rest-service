@@ -120,7 +120,7 @@ class Builder
         return function (CommandInterface $command, GuzzleBadResponseException $e) {
             $operation = $this->service->getOperation($command->getName());
 
-            return $this->processResponseError(
+            $this->processResponseError(
                 $operation ?: [],
                 $e->getRequest(),
                 $e->getResponse(),
@@ -137,7 +137,9 @@ class Builder
      * @param ResponseInterface               $response
      * @param GuzzleBadResponseException|null $e
      *
-     * @return BadResponseException|null
+     * @throws \IndraGunawan\RestService\Exception\BadResponseException|null
+     *
+     * @return void
      */
     private function processResponseError(
         array $operation,
@@ -150,7 +152,7 @@ class Builder
             try {
                 $body = GuzzleHttp\json_decode((!is_null($response)) ? $response->getBody() : '', true);
             } catch (\InvalidArgumentException $ex) {
-                return new BadResponseException(
+                throw new BadResponseException(
                     '',
                     $ex->getMessage(),
                     ($e ? $e->getMessage() : ''),
@@ -174,7 +176,7 @@ class Builder
                     if (!$error['ifCode']) {
                         $responseMessage = $this->getErrorMessage($body, $error, $response);
 
-                        return new BadResponseException(
+                        throw new BadResponseException(
                             $responseCode,
                             $responseMessage,
                             ($e ? $e->getMessage() : '').' code: '.$responseCode.', message: '.$responseMessage,
@@ -187,13 +189,13 @@ class Builder
                     $responseCode = $response->getStatusCode();
                 }
 
-                if ($error['ifCode'] == $responseCode) {
+                if ($this->checkResponseCode($responseCode, $error['operator'], $error['ifCode'])) {
                     $responseMessage = $this->getErrorMessage($body, $error, $response);
 
-                    return new BadResponseException(
+                    throw new BadResponseException(
                         $responseCode,
                         $responseMessage,
-                        ($e ? $e->getMessage() : '').' code: '.$responseCode.', message: '.$responseMessage,
+                        ($e ? $e->getMessage() : '').'. code: '.$responseCode.', message: '.$responseMessage,
                         $request,
                         $response,
                         $e ? $e->getPrevious() : null
@@ -242,7 +244,7 @@ class Builder
         if (!$message) {
             $message = $error['defaultMessage'];
         }
-        if (!$message && $response->getStatusCode() >= 400) {
+        if (!$message) {
             $message = $response->getReasonPhrase();
         }
 
@@ -461,6 +463,36 @@ class Builder
                 //
             default:
                 return;
+        }
+    }
+
+    /**
+     * Check is responsecode is match with code
+     *
+     * @param  string $responseCode
+     * @param  string $operator
+     * @param  string $code
+     * @return bool
+     */
+    public function checkResponseCode($responseCode, $operator, $code)
+    {
+        switch ($operator) {
+            case '===':
+                return ($responseCode === $code);
+            case '!==':
+                return ($responseCode !== $code);
+            case '!=':
+                return ($responseCode != $code);
+            case '<':
+                return ($responseCode < $code);
+            case '<=':
+                return ($responseCode <= $code);
+            case '>=':
+                return ($responseCode >= $code);
+            case '>':
+                return ($responseCode > $code);
+            default:
+                return ($responseCode == $code);
         }
     }
 }
