@@ -38,7 +38,7 @@ class Validator
      */
     public function add($name, array $detail, $value = '')
     {
-        if (!$value) {
+        if (!$value && !is_numeric($value)) {
             $value = $detail['defaultValue'];
         }
         $this->datas[$name] = $value;

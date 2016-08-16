@@ -164,6 +164,15 @@ class SpecificationConfiguration implements ConfigurationInterface
                         ->thenInvalid('Invalid Protocol %s, Available protocols are "rest_json"')
                     ->end()
                 ->end() // responseProtocol
+                ->booleanNode('strictRequest')
+                    ->defaultFalse()
+                ->end() // strictRequest
+                ->booleanNode('strictResponse')
+                    ->defaultFalse()
+                ->end() // strictResponse
+                ->booleanNode('sentEmptyField')
+                    ->defaultTrue()
+                ->end()
         ;
 
         $requestNode = $operationNode
@@ -218,7 +227,7 @@ class SpecificationConfiguration implements ConfigurationInterface
     {
         $availableLocations = ['header', 'uri', 'query', 'body'];
         $availableTypes = ['map', 'list'];
-        $availableMemberTypes = ['string', 'integer', 'float', 'number', 'boolean', 'datetime'];
+        $availableMemberTypes = ['map', 'list', 'string', 'integer', 'float', 'number', 'boolean', 'datetime'];
         // map = object
         // list = array
 
@@ -267,7 +276,6 @@ class SpecificationConfiguration implements ConfigurationInterface
                                 if (isset($member['shape'])
                                     && (isset($member['location'])
                                         || isset($member['defaultValue'])
-                                        || isset($member['type'])
                                         || isset($member['format'])
                                     )
                                 ) {
@@ -277,7 +285,11 @@ class SpecificationConfiguration implements ConfigurationInterface
                                     ));
                                 }
 
-                                if (isset($member['type'])
+                                if (isset($member['shape']) && isset($member['type'])) {
+                                    if (!in_array($member['type'], ['map', 'list'])) {
+                                        throw new InvalidSpecificationException('type for shape only "map", "list"');
+                                    }
+                                } elseif (isset($member['type'])
                                     && !in_array($member['type'], ['string', 'datetime'])
                                     && isset($member['format'])
                                 ) {

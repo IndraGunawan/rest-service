@@ -6,6 +6,7 @@ use GuzzleHttp;
 use GuzzleHttp\Command\CommandInterface;
 use GuzzleHttp\Exception\BadResponseException as GuzzleBadResponseException;
 use GuzzleHttp\Psr7\Request;
+use IndraGunawan\RestService\Exception\BadRequestException;
 use IndraGunawan\RestService\Exception\BadResponseException;
 use IndraGunawan\RestService\Exception\CommandException;
 use IndraGunawan\RestService\Exception\ValidatorException;
@@ -138,8 +139,6 @@ class Builder
      * @param GuzzleBadResponseException|null $e
      *
      * @throws \IndraGunawan\RestService\Exception\BadResponseException|null
-     *
-     * @return void
      */
     private function processResponseError(
         array $operation,
@@ -287,7 +286,9 @@ class Builder
             $shape,
             $command->getName(),
             $action,
-            $result
+            $result,
+            ('request' === $action) ? $operation['strictRequest'] : $operation['strictResponse'],
+            $operation['sentEmptyField']
         );
 
         if (!$validator->validate([$command->getName() => $datas])) {
@@ -307,17 +308,22 @@ class Builder
      * @param string    $path
      * @param string    $action
      * @param array     &$result
+     * @param bool      $isStrict
+     * @param bool      $isSentEmptyField
      *
      * @return array
      */
     private function createData(
         Validator $validator,
-        array $datas,
+        array &$datas,
         array $shape,
         $path,
         $action,
-        array &$result
+        array &$result,
+        $isStrict = false,
+        $isSentEmptyField = true
     ) {
+        $tmpData = $datas;
         $bodyResult = [];
         if ('list' === $shape['type']) {
             $path .= '[*]';
@@ -326,6 +332,10 @@ class Builder
         foreach ($shape['members'] as $name => $parameter) {
             $tmpPath = $path.'['.$name.']';
             $value = isset($datas[$name]) ? $datas[$name] : null;
+            if (!$value) {
+                $datas[$name] = $parameter['defaultValue'];
+            }
+
             // set validator
             $validator->add($tmpPath, $parameter, $value);
 
@@ -345,55 +355,66 @@ class Builder
                             throw new ValidatorException($tmpPath, 'Expected "list", but got "map"');
                         }
 
-                        $bodyResult[$parameter['locationName']][] = $this->createData($validator, $child, $parameter, $tmpPath, $action, $result);
+                        $bodyResult[$parameter['locationName']][] = $this->createData(
+                            $validator,
+                            $datas[$name][$idx],
+                            $parameter,
+                            $tmpPath,
+                            $action,
+                            $result,
+                            $isStrict,
+                            $isSentEmptyField
+                        );
                     }
                 } elseif ('map' === $parameter['type']) {
                     if (is_null($value)) {
+                        if (array_key_exists($name, $datas)) {
+                            unset($tmpData[$name]);
+                        }
                         continue;
                     }
                     $children = $value ?: [];
                     foreach (array_keys($parameter['members']) as $key) {
                         if (!array_key_exists($key, $children)) {
                             $children[$key] = null;
+                            $datas[$name][$key] = null;
                         }
                     }
 
-                    foreach ($children as $parameterName => $child) {
-                        if (is_array($child)) {
-                            $bodyResult[$parameter['locationName']][$parameterName] = $this->createData(
-                                $validator,
-                                $child,
-                                $parameter,
-                                $tmpPath,
-                                $action,
-                                $result
-                            );
-                        }
-                    }
                     $bodyResult[$parameter['locationName']] = $this->createData(
                         $validator,
-                        $children,
+                        $datas[$name],
                         $parameter,
                         $tmpPath,
                         $action,
-                        $result
+                        $result,
+                        $isStrict,
+                        $isSentEmptyField
                     );
                 }
             }
 
-            $value = $this->getFormatedValue($value, $parameter, $action);
+            $formattedValue = $this->getFormatedValue($value, $parameter, $action);
             if ('body' !== $parameter['location']) {
-                $result[$parameter['location']][$parameter['locationName']] = $value;
+                $result[$parameter['location']][$parameter['locationName']] = $formattedValue;
             } else {
                 if (!array_key_exists($parameter['locationName'], $bodyResult)) {
-                    $bodyResult[$parameter['locationName']] = $value;
+                    if (!$value && !is_numeric($value)) {
+                        $value = $parameter['defaultValue'];
+                    }
+                    if ($isSentEmptyField || ($value || is_numeric($value))) {
+                        $bodyResult[$parameter['locationName']] = $formattedValue;
+                    }
                 }
             }
-            unset($datas[$name]);
+            unset($tmpData[$name]);
         }
 
-        if (count($datas) > 0) {
-            foreach ($datas as $name => $child) {
+        if (count($tmpData) > 0) {
+            if ($isStrict) {
+                throw new BadRequestException(ucwords($action), 'Undefined parameters "'.implode('", "', array_keys($tmpData)).'"');
+            }
+            foreach ($tmpData as $name => $child) {
                 $bodyResult[$name] = $child;
             }
         }
@@ -412,7 +433,7 @@ class Builder
      */
     private function getFormatedValue($value, array $parameter, $action)
     {
-        if (!$value) {
+        if (!$value && !is_numeric($value)) {
             $value = $parameter['defaultValue'];
         }
 
@@ -467,32 +488,33 @@ class Builder
     }
 
     /**
-     * Check is responsecode is match with code
+     * Check is responsecode is match with code.
      *
-     * @param  string $responseCode
-     * @param  string $operator
-     * @param  string $code
+     * @param string $responseCode
+     * @param string $operator
+     * @param string $code
+     *
      * @return bool
      */
     public function checkResponseCode($responseCode, $operator, $code)
     {
         switch ($operator) {
             case '===':
-                return ($responseCode === $code);
+                return $responseCode === $code;
             case '!==':
-                return ($responseCode !== $code);
+                return $responseCode !== $code;
             case '!=':
-                return ($responseCode != $code);
+                return $responseCode != $code;
             case '<':
-                return ($responseCode < $code);
+                return $responseCode < $code;
             case '<=':
-                return ($responseCode <= $code);
+                return $responseCode <= $code;
             case '>=':
-                return ($responseCode >= $code);
+                return $responseCode >= $code;
             case '>':
-                return ($responseCode > $code);
+                return $responseCode > $code;
             default:
-                return ($responseCode == $code);
+                return $responseCode == $code;
         }
     }
 }

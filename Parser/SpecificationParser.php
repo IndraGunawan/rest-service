@@ -25,7 +25,7 @@ class SpecificationParser
      */
     public function parse($specificationFile, array $defaults = [], $cacheDir = null, $debug = true)
     {
-        $cachePath = $cacheDir.'/restService_'.md5($specificationFile);
+        $cachePath = $cacheDir.'/restService_'.md5(serialize($defaults).$specificationFile);
 
         $restServiceCache = new ConfigCache($cachePath, $debug);
         if (false === $restServiceCache->isFresh()) {
@@ -169,7 +169,7 @@ class SpecificationParser
 
                             $newShape = array_replace_recursive(
                                 $shapes[$shapeName],
-                                $operation[$placement]
+                                $operations[$name][$placement]
                             );
                             $newShape[$property] = null;
 
@@ -244,8 +244,8 @@ class SpecificationParser
                 }
 
                 $newMemberShape = array_replace_recursive(
-                    $members[$memberName],
-                    $this->mergetMemberReferenceShape($shapes, $referenceShape)
+                    $this->mergetMemberReferenceShape($shapes, $referenceShape),
+                    $members[$memberName]
                 );
                 $newMemberShape['shape'] = null;
 
