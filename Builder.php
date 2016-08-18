@@ -77,6 +77,15 @@ class Builder
                 $uri .= sprintf('?%s', http_build_query($result['query'], null, '&', PHP_QUERY_RFC3986));
             }
 
+            // GET method has no body, concat to uri
+            if (in_array($operation['httpMethod'], ['GET'])) {
+                // if uri has no query string, append '?' else '&'
+                $uri .= (false === strpos($uri, '?')) ? '?' : '&';
+
+                $uri .= http_build_query($result['body'], null, '&', PHP_QUERY_RFC3986);
+                $result['body'] = null;
+            }
+
             return new Request(
                 $operation['httpMethod'],
                 $this->service->getEndpoint().$uri,
