@@ -40,13 +40,31 @@ class BadResponseException extends BaseBadResponseException
         parent::__construct($message, $request, $response, $previous);
     }
 
+    /**
+     * Get Status Code.
+     *
+     * @return mixed
+     */
     public function getStatusCode()
     {
         return $this->responseCode;
     }
 
+    /**
+     * Get Status Message.
+     *
+     * @return string
+     */
     public function getStatusMessage()
     {
         return $this->responseMessage;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return $this->responseCode.': '.$this->responseMessage;
     }
 }

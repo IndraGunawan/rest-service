@@ -65,6 +65,8 @@ class Service implements ServiceInterface
         if ($this->hasOperation($name)) {
             return $this->getOperations()[$name];
         }
+
+        return;
     }
 
     /**

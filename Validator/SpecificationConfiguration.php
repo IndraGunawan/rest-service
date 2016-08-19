@@ -2,7 +2,7 @@
 
 namespace IndraGunawan\RestService\Validator;
 
-use IndraGunawan\RestService\Exception\InvalidSpecificationException;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -109,6 +109,7 @@ class SpecificationConfiguration implements ConfigurationInterface
 
         $node = $treeBuilder
             ->root('operations')
+            ->isRequired()
             ->requiresAtLeastOneElement()
             ->useAttributeAsKey('name')
         ;
@@ -236,12 +237,12 @@ class SpecificationConfiguration implements ConfigurationInterface
                 ->always(function ($v) use ($fromOperation) {
                     if (!$fromOperation) {
                         if (isset($v['shape'])) {
-                            throw new InvalidSpecificationException('Unrecognized option "shape"');
+                            throw new InvalidConfigurationException('Unrecognized option "shape"');
                         }
                     }
 
                     if (isset($v['shape']) && (isset($v['type']) || isset($v['members']))) {
-                        throw new InvalidSpecificationException('Cannot combine "shape" with other properties.');
+                        throw new InvalidConfigurationException('Cannot combine "shape" with other properties.');
                     }
 
                     return $v;
@@ -279,7 +280,7 @@ class SpecificationConfiguration implements ConfigurationInterface
                                         || isset($member['format'])
                                     )
                                 ) {
-                                    throw new InvalidSpecificationException(sprintf(
+                                    throw new InvalidConfigurationException(sprintf(
                                         'Member "%s". Cannot combine "shape" with other properties.',
                                         $name
                                     ));
@@ -287,13 +288,13 @@ class SpecificationConfiguration implements ConfigurationInterface
 
                                 if (isset($member['shape']) && isset($member['type'])) {
                                     if (!in_array($member['type'], ['map', 'list'])) {
-                                        throw new InvalidSpecificationException('type for shape only "map", "list"');
+                                        throw new InvalidConfigurationException('type for shape only "map", "list"');
                                     }
                                 } elseif (isset($member['type'])
                                     && !in_array($member['type'], ['string', 'datetime'])
                                     && isset($member['format'])
                                 ) {
-                                    throw new InvalidSpecificationException('"format" only for "string" or "datetime"');
+                                    throw new InvalidConfigurationException('"format" only for "string" or "datetime"');
                                 }
                             }
 
@@ -354,7 +355,7 @@ class SpecificationConfiguration implements ConfigurationInterface
                 ->always(function ($v) use ($fromOperation) {
                     if (!$fromOperation) {
                         if (isset($v['errorShape'])) {
-                            throw new InvalidSpecificationException('Unrecognized option "errorShape"');
+                            throw new InvalidConfigurationException('Unrecognized option "errorShape"');
                         }
                     }
 
@@ -366,14 +367,14 @@ class SpecificationConfiguration implements ConfigurationInterface
                             || isset($v['defaultMessage'])
                         )
                     ) {
-                        throw new InvalidSpecificationException('Cannot combine "shape" with other properties.');
+                        throw new InvalidConfigurationException('Cannot combine "shape" with other properties.');
                     }
 
                     if (isset($v['type'])) {
                         if ('field' === $v['type'] && !isset($v['codeField'])) {
-                            throw new InvalidSpecificationException('Error type "field", plesae provide "codeField" option.');
+                            throw new InvalidConfigurationException('Error type "field", plesae provide "codeField" option.');
                         } elseif ('httpStatusCode' === $v['type'] && isset($v['codeField'])) {
-                            throw new InvalidSpecificationException('Error type "httpStatusCode", Unrecognized option "codeField".');
+                            throw new InvalidConfigurationException('Error type "httpStatusCode", Unrecognized option "codeField".');
                         }
                     }
 

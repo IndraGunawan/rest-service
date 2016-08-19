@@ -124,7 +124,7 @@ class Validator
     /**
      * Create ValidatorException.
      *
-     * @return ValidationException
+     * @return IndraGunawan\RestService\Exception\ValidatorException
      */
     public function createValidatorException()
     {

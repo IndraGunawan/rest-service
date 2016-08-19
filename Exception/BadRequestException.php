@@ -27,16 +27,29 @@ class BadRequestException extends \RuntimeException
         parent::__construct($requestCode.': '.$requestMessage, 0, $prev);
     }
 
+    /**
+     * Get Request Code.
+     *
+     * @return mixed
+     */
     public function getRequestCode()
     {
         return $this->requestCode;
     }
 
+    /**
+     * Get Request Message.
+     *
+     * @return string
+     */
     public function getRequestMessage()
     {
         return $this->requestMessage;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
         return $this->requestCode.': '.$this->requestMessage;

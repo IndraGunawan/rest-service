@@ -62,6 +62,9 @@ class SpecificationParser
      *
      * @param array &$specification
      * @param array $defaults
+     *
+     * @throws \IndraGunawan\RestService\Exception\InvalidSpecificationException
+     * @throws \IndraGunawan\RestService\Exception\ValidatorException
      */
     private function validateDefaults(array &$specification, array $defaults)
     {
@@ -217,7 +220,7 @@ class SpecificationParser
 
         // merge member reference
         foreach (array_keys($shapes) as $name) {
-            $this->mergetMemberReferenceShape($shapes, $name);
+            $this->mergeMemberReferenceShape($shapes, $name);
         }
     }
 
@@ -229,7 +232,7 @@ class SpecificationParser
      *
      * @return array
      */
-    private function mergetMemberReferenceShape(array &$shapes, $shapeName)
+    private function mergeMemberReferenceShape(array &$shapes, $shapeName)
     {
         $members = $shapes[$shapeName]['members'];
         foreach ($members as $memberName => $member) {
@@ -244,7 +247,7 @@ class SpecificationParser
                 }
 
                 $newMemberShape = array_replace_recursive(
-                    $this->mergetMemberReferenceShape($shapes, $referenceShape),
+                    $this->mergeMemberReferenceShape($shapes, $referenceShape),
                     $members[$memberName]
                 );
                 $newMemberShape['shape'] = null;
