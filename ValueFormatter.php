@@ -57,65 +57,60 @@ class ValueFormatter
     /**
      * Format Integer.
      *
-     * @param mixed      $value
-     * @param mixed|null $format
-     *
      * @return int
      */
-    private function formatInteger($value, $format = null)
+    private function formatInteger()
     {
+        list($value) = func_get_args();
+
         return (int) (string) $value;
     }
 
     /**
      * Format Float.
      *
-     * @param mixed      $value
-     * @param mixed|null $format
-     *
      * @return float
      */
-    private function formatFloat($value, $format = null)
+    private function formatFloat()
     {
+        list($value) = func_get_args();
+
         return (float) (string) $value;
     }
 
     /**
      * Format String.
      *
-     * @param mixed      $value
-     * @param mixed|null $format
-     *
      * @return string
      */
-    private function formatString($value, $format = null)
+    private function formatString()
     {
+        list($value, $format) = func_get_args();
+
         return sprintf($format ?: '%s', (string) $value);
     }
 
     /**
      * Format Boolean.
      *
-     * @param mixed      $value
-     * @param mixed|null $format
-     *
      * @return bool
      */
-    private function formatBoolean($value, $format = null)
+    private function formatBoolean()
     {
+        list($value) = func_get_args();
+
         return ('false' === $value || false === $value || 0 === $value) ? false : true;
     }
 
     /**
      * Format Number.
      *
-     * @param mixed      $value
-     * @param mixed|null $format
-     *
      * @return string
      */
-    private function formatNumber($value, $format = null)
+    private function formatNumber()
     {
+        list($value, $format) = func_get_args();
+
         if ($format) {
             $format = explode('|', $format);
             $decimal = isset($format[0]) ? $format[0] : 0;
@@ -131,13 +126,12 @@ class ValueFormatter
     /**
      * Format Datetime.
      *
-     * @param mixed      $value
-     * @param mixed|null $format
-     *
-     * @return \DateTime|string
+     * @return \DateTime|string|bool
      */
-    private function formatDatetime($value, $format = null)
+    private function formatDatetime()
     {
+        list($value, $format) = func_get_args();
+
         if ($this->isValueEmpty($value)) {
             return;
         }

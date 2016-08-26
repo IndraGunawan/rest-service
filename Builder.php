@@ -410,7 +410,7 @@ class Builder
                 }
             }
 
-            $formattedValue = $this->formatter->format($parameter['type'], $parameter['format'], $value, $parameter['defaultValue'])
+            $formattedValue = $this->formatter->format($parameter['type'], $parameter['format'], $value, $parameter['defaultValue']);
             if ('body' !== $parameter['location']) {
                 $result[$parameter['location']][$parameter['locationName']] = $formattedValue;
             } else {
