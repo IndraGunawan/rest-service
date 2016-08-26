@@ -4,7 +4,6 @@ namespace IndraGunawan\RestService\Tests\Validator;
 
 use IndraGunawan\RestService\Parser\SpecificationParser;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use IndraGunawan\RestService\Exception\ValidatorException;
 
 class SpecificationParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +28,6 @@ class SpecificationParserTest extends \PHPUnit_Framework_TestCase
 
         $processorMock = \Mockery::mock('overload:Symfony\Component\Config\Definition\Processor')
             ->shouldReceive('processConfiguration')->andThrow(InvalidConfigurationException::class, 'The child node "endpoint" at path "rest_service" must be configured.');
-        ;
 
         $validatorMock = \Mockery::mock('overload:IndraGunawan\RestService\Validator\Validator')
             ->shouldReceive('add')->andReturn(null)

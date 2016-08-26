@@ -11,6 +11,7 @@ use IndraGunawan\RestService\Exception\BadResponseException;
 use IndraGunawan\RestService\Exception\CommandException;
 use IndraGunawan\RestService\Exception\ValidatorException;
 use IndraGunawan\RestService\Validator\Validator;
+use IndraGunawan\RestService\ValueFormatter;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -22,11 +23,17 @@ class Builder
     private $service;
 
     /**
+     * @var ValueFormatter
+     */
+    private $formatter;
+
+    /**
      * @param ServiceInterface $service
      */
     public function __construct(ServiceInterface $service)
     {
         $this->service = $service;
+        $this->formatter = new ValueFormatter();
     }
 
     /**
@@ -403,7 +410,7 @@ class Builder
                 }
             }
 
-            $formattedValue = $this->getFormatedValue($value, $parameter, $action);
+            $formattedValue = $this->formatter->format($parameter['type'], $parameter['format'], $value, $parameter['defaultValue'])
             if ('body' !== $parameter['location']) {
                 $result[$parameter['location']][$parameter['locationName']] = $formattedValue;
             } else {
@@ -429,71 +436,6 @@ class Builder
         }
 
         return $bodyResult;
-    }
-
-    /**
-     * Get formatted value.
-     *
-     * @param mixed  $value     [description]
-     * @param array  $parameter [description]
-     * @param string $action    request/response
-     *
-     * @return mixed
-     */
-    private function getFormatedValue($value, array $parameter, $action)
-    {
-        if (!$value && !is_numeric($value)) {
-            $value = $parameter['defaultValue'];
-        }
-
-        switch ($parameter['type']) {
-            case 'integer':
-                return (int) (string) $value;
-            case 'float':
-                return (float) (string) $value;
-            case 'string':
-                $result = (string) $value;
-
-                return sprintf($parameter['format'] ?: '%s', $result);
-            case 'boolean':
-                return ($value === 'true' || true === $value) ? true : false;
-            case 'number':
-                if ($parameter['format']) {
-                    $format = explode('|', $parameter['format']);
-                    $decimal = isset($format[0]) ? $format[0] : 0;
-                    $decimalPoint = isset($format[1]) ? $format[1] : '.';
-                    $thousandsSeparator = isset($format[2]) ? $format[2] : ',';
-
-                    return number_format((float) (string) $value, $decimal, $decimalPoint, $thousandsSeparator);
-                }
-
-                return (string) $value;
-            case 'datetime':
-                if ('request' === $action) {
-                    if (!$value) {
-                        return;
-                    }
-
-                    if (!($value instanceof \DateTime)) {
-                        $value = new \DateTime($value);
-                    }
-
-                    if ($parameter['format']) {
-                        return $value->format($parameter['format']);
-                    }
-
-                    return $value->format('Y-m-d\TH:i:s\Z');
-                } elseif ('response' === $action) {
-                    if ($parameter['format']) {
-                        return \DateTime::createFromFormat($parameter['format'], $value);
-                    } else {
-                        return new \DateTime($value);
-                    }
-                }
-                //
-            default:
-                return;
-        }
     }
 
     /**

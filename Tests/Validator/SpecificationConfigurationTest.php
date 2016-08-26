@@ -72,7 +72,7 @@ class SpecificationConfigurationTest extends \PHPUnit_Framework_TestCase
                         'members' => [
                             'id' => [
                                 'location' => 'uri',
-                            ]
+                            ],
                         ],
                         'shape' => 'AnotherShape',
                     ],
@@ -102,12 +102,12 @@ class SpecificationConfigurationTest extends \PHPUnit_Framework_TestCase
                         'members' => [
                             'id' => [
                                 'location' => 'uri',
-                            ]
+                            ],
                         ],
                     ],
                     'AnotherShape1' => [
                         'extends' => 'AnotherShape',
-                    ]
+                    ],
                 ],
             ],
         ];
@@ -169,7 +169,7 @@ class SpecificationConfigurationTest extends \PHPUnit_Framework_TestCase
                         'ifCode' => 400,
                         'operator' => '>=',
                     ],
-                ]
+                ],
             ],
         ];
         $processor = new Processor();

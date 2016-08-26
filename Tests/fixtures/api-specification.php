@@ -6,7 +6,7 @@ return [
     'operations' => [
         'get' => [
             'httpMethod' => 'GET',
-            'requestUri' => '/get'
+            'requestUri' => '/get',
         ],
     ],
 ];
