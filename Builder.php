@@ -11,7 +11,6 @@ use IndraGunawan\RestService\Exception\BadResponseException;
 use IndraGunawan\RestService\Exception\CommandException;
 use IndraGunawan\RestService\Exception\ValidatorException;
 use IndraGunawan\RestService\Validator\Validator;
-use IndraGunawan\RestService\ValueFormatter;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -218,8 +217,6 @@ class Builder
                 }
             }
         }
-
-        return;
     }
 
     /**

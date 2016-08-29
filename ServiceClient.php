@@ -221,7 +221,7 @@ class ServiceClient implements ServiceClientInterface
                 } catch (ValidatorException $e) {
                     throw new BadRequestException($e->getField(), $e->getErrorMessage(), $e);
                 } catch (BadResponseException $e) {
-                    throw $this->parseBadResponseException($command, $e);
+                    $this->parseBadResponseException($command, $e);
                 } catch (\Exception $e) {
                     throw new CommandException($e->getMessage(), $command, $e);
                 }

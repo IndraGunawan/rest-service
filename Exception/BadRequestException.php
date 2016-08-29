@@ -15,6 +15,11 @@ class BadRequestException extends \RuntimeException
     private $requestMessage;
 
     /**
+     * @var \Exception
+     */
+    private $prev;
+
+    /**
      * @param mixed           $requestCode
      * @param string          $requestMessage
      * @param \Exception|null $prev
@@ -23,6 +28,7 @@ class BadRequestException extends \RuntimeException
     {
         $this->requestCode = $requestCode;
         $this->requestMessage = $requestMessage;
+        $this->prev = $prev;
 
         parent::__construct($requestCode.': '.$requestMessage, 0, $prev);
     }
@@ -53,5 +59,17 @@ class BadRequestException extends \RuntimeException
     public function __toString()
     {
         return $this->requestCode.': '.$this->requestMessage;
+    }
+
+    /**
+     * Get body content if exists.
+     */
+    public function getBodyContent()
+    {
+        if ($this->prev instanceof \GuzzleHttp\Exception\BadResponseException) {
+            return $this->prev->getResponse()->getBody();
+        }
+
+        return;
     }
 }
