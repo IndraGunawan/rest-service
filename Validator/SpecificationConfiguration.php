@@ -161,8 +161,8 @@ class SpecificationConfiguration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultNull()
                     ->validate()
-                        ->ifNotInArray(['rest_json'])
-                        ->thenInvalid('Invalid Protocol %s, Available protocols are "rest_json"')
+                        ->ifNotInArray(['rest_json', 'stream'])
+                        ->thenInvalid('Invalid Protocol %s, Available protocols are "rest_json", "stream"')
                     ->end()
                 ->end() // responseProtocol
                 ->booleanNode('strictRequest')
