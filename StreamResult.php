@@ -4,7 +4,7 @@ namespace IndraGunawan\RestService;
 
 use GuzzleHttp\Psr7\Response as BaseResponse;
 
-class StreamResponse extends BaseResponse
+class StreamResult extends BaseResponse
 {
     public function __construct(
         $status = 200,

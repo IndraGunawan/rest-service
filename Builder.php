@@ -11,7 +11,7 @@ use IndraGunawan\RestService\Exception\BadResponseException;
 use IndraGunawan\RestService\Exception\CommandException;
 use IndraGunawan\RestService\Exception\ValidatorException;
 use IndraGunawan\RestService\Validator\Validator;
-use IndraGunawan\RestService\StreamResponse;
+use IndraGunawan\RestService\StreamResult;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -128,7 +128,7 @@ class Builder
 
                 return new Result($result['body'], $result['header']);
             } elseif ('stream' === $operation['responseProtocol']) {
-                $streamResponse = new StreamResponse(
+                $streamResponse = new StreamResult(
                     $response->getStatusCode(),
                     $response->getHeaders(),
                     $response->getBody(),
