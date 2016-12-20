@@ -11,6 +11,7 @@ use IndraGunawan\RestService\Exception\BadResponseException;
 use IndraGunawan\RestService\Exception\CommandException;
 use IndraGunawan\RestService\Exception\ValidatorException;
 use IndraGunawan\RestService\Validator\Validator;
+use IndraGunawan\RestService\StreamResult;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -115,19 +116,28 @@ class Builder
         ) {
             $operation = $this->service->getOperation($command->getName());
             $this->processResponseError($operation ?: [], $request, $response);
-
-            $body = [];
             if ('rest_json' === $operation['responseProtocol']) {
+
                 $body = GuzzleHttp\json_decode($response->getBody(), true);
+
+                $result = $this->transformData($command, $body, $operation, 'response');
+
+                foreach ($response->getHeaders() as $name => $header) {
+                    $result['header'][$name] = is_array($header) ? array_pop($header) : null;
+                }
+
+                return new Result($result['body'], $result['header']);
+            } elseif ('stream' === $operation['responseProtocol']) {
+                $streamResponse = new StreamResult(
+                    $response->getStatusCode(),
+                    $response->getHeaders(),
+                    $response->getBody(),
+                    $response->getProtocolVersion(),
+                    $response->getReasonPhrase()
+                );
+
+                return $streamResponse;
             }
-
-            $result = $this->transformData($command, $body, $operation, 'response');
-
-            foreach ($response->getHeaders() as $name => $header) {
-                $result['header'][$name] = is_array($header) ? array_pop($header) : null;
-            }
-
-            return new Result($result['body'], $result['header']);
         };
     }
 
@@ -162,19 +172,21 @@ class Builder
         GuzzleBadResponseException $e = null
     ) {
         $body = null;
-        if ('rest_json' === $operation['responseProtocol']) {
-            try {
+        try {
+            if ('rest_json' === $operation['responseProtocol']) {
                 $body = GuzzleHttp\json_decode((!is_null($response)) ? $response->getBody() : '', true);
-            } catch (\InvalidArgumentException $ex) {
-                throw new BadResponseException(
-                    '',
-                    $ex->getMessage(),
-                    ($e ? $e->getMessage() : ''),
-                    $request,
-                    $response,
-                    $e ? $e->getPrevious() : null
-                );
+            } elseif ('stream' === $operation['responseProtocol']) {
+                $body = $response->getBody();
             }
+        } catch (\InvalidArgumentException $ex) {
+            throw new BadResponseException(
+                '',
+                $ex->getMessage(),
+                ($ex ? $ex->getMessage() : ''),
+                $request,
+                $response,
+                $ex ? $ex->getPrevious() : null
+            );
         }
 
         if ($body) {
