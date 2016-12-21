@@ -25,7 +25,7 @@ class SpecificationParser
      */
     public function parse($specificationFile, array $defaults = [], $cacheDir = null, $debug = true)
     {
-        $cachePath = null === $cacheDir ? $cacheDir.'/restService_'.md5(serialize($defaults).$specificationFile) : null;
+        $cachePath = null === $cacheDir ? null : $cacheDir.'/restService_'.md5(serialize($defaults).$specificationFile);
 
         $restServiceCache = new ConfigCache($cachePath, $debug);
         if (false === $restServiceCache->isFresh()) {
