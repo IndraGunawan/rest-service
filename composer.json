@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": "^5.5 || ^7.0",
+        "php": ">=7.0.8",
         "guzzlehttp/command": "^1.0",
         "siriusphp/validation": "^2.1",
         "symfony/config": "^2.7 || ^3.0 || ^4.0"
