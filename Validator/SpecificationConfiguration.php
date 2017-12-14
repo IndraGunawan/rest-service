@@ -1,11 +1,20 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of indragunawan/rest-service package.
+ *
+ * (c) Indra Gunawan <hello@indra.my.id>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace IndraGunawan\RestService\Validator;
 
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
  * This is the class that validates and merges configuration.
@@ -275,7 +284,8 @@ class SpecificationConfiguration implements ConfigurationInterface
                                 }
 
                                 if (isset($member['shape'])
-                                    && (isset($member['location'])
+                                    && (
+                                        isset($member['location'])
                                         || isset($member['defaultValue'])
                                         || isset($member['format'])
                                     )
@@ -287,11 +297,11 @@ class SpecificationConfiguration implements ConfigurationInterface
                                 }
 
                                 if (isset($member['shape']) && isset($member['type'])) {
-                                    if (!in_array($member['type'], ['map', 'list'])) {
+                                    if (!in_array($member['type'], ['map', 'list'], true)) {
                                         throw new InvalidConfigurationException('type for shape only "map", "list"');
                                     }
                                 } elseif (isset($member['type'])
-                                    && !in_array($member['type'], ['string', 'datetime'])
+                                    && !in_array($member['type'], ['string', 'datetime'], true)
                                     && isset($member['format'])
                                 ) {
                                     throw new InvalidConfigurationException('"format" only for "string" or "datetime"');
@@ -360,7 +370,8 @@ class SpecificationConfiguration implements ConfigurationInterface
                     }
 
                     if (isset($v['errorShape'])
-                        && (isset($v['type'])
+                        && (
+                            isset($v['type'])
                             || isset($v['codeField'])
                             || isset($v['ifCode'])
                             || isset($v['messageField'])

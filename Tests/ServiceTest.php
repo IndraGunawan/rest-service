@@ -1,14 +1,24 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of indragunawan/rest-service package.
+ *
+ * (c) Indra Gunawan <hello@indra.my.id>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace IndraGunawan\RestService\Tests;
 
 use IndraGunawan\RestService\Service;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
  */
-class ServiceTest extends \PHPUnit_Framework_TestCase
+class ServiceTest extends TestCase
 {
     private $service;
 
@@ -42,18 +52,18 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testServiceName()
     {
-        $this->assertEquals('Foo', $this->service->getName());
+        $this->assertSame('Foo', $this->service->getName());
     }
 
     public function testServiceEndpoint()
     {
-        $this->assertEquals('http://httpbin.org/', $this->service->getEndpoint());
+        $this->assertSame('http://httpbin.org/', $this->service->getEndpoint());
     }
 
     public function testServiceOperation()
     {
         $this->assertInternalType('array', $this->service->getOperations());
-        $this->assertEquals(2, count($this->service->getOperations()));
+        $this->assertSame(2, count($this->service->getOperations()));
         $this->assertTrue($this->service->hasOperation('testGet'));
         $this->assertInternalType('array', $this->service->getOperation('testGet'));
         $this->assertNull($this->service->getOperation('testGet1'));

@@ -30,7 +30,7 @@ Usage
 // httpbin-v1.php
 
 return [
-    'name' => 'OneSignal API',
+    'name' => 'httpbin API',
     'endpoint' => '{endpoint}',
     'defaults' => [
         'endpoint' => [
@@ -81,11 +81,11 @@ use IndraGunawan\RestService\ServiceClient;
             // default value for services specification
         ],
     ];
-    $cacheDir = __DIR__.'/../cache'; // optional
+    $cacheDir = __DIR__.'/../cache'; // optional, default: null
     $debug = false; // optional, default: false
 
     $service = new ServiceClient(__DIR__.'/httpbin-v1.php', $config, $cacheDir, $debug);
-    $result = $service->getApps([
+    $result = $service->postTest([
         'Name' => 'My Name',
     ]);
 

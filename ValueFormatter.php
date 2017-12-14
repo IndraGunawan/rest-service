@@ -1,4 +1,13 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of indragunawan/rest-service package.
+ *
+ * (c) Indra Gunawan <hello@indra.my.id>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace IndraGunawan\RestService;
 
@@ -117,7 +126,7 @@ class ValueFormatter
             $decimalPoint = isset($format[1]) ? $format[1] : '.';
             $thousandsSeparator = isset($format[2]) ? $format[2] : ',';
 
-            return number_format((float) (string) $value, $decimal, $decimalPoint, $thousandsSeparator);
+            return number_format($this->formatFloat($value), $this->formatInteger($decimal), $decimalPoint, $thousandsSeparator);
         }
 
         return (string) $value;

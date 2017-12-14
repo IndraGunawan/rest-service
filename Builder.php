@@ -1,4 +1,13 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of indragunawan/rest-service package.
+ *
+ * (c) Indra Gunawan <hello@indra.my.id>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace IndraGunawan\RestService;
 
@@ -11,7 +20,6 @@ use IndraGunawan\RestService\Exception\BadResponseException;
 use IndraGunawan\RestService\Exception\CommandException;
 use IndraGunawan\RestService\Exception\ValidatorException;
 use IndraGunawan\RestService\Validator\Validator;
-use IndraGunawan\RestService\StreamResult;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -85,11 +93,11 @@ class Builder
             }
 
             // GET method has no body, concat to uri
-            if (in_array($operation['httpMethod'], ['GET'])) {
+            if (in_array($operation['httpMethod'], ['GET'], true)) {
                 // if uri has no query string, append '?' else '&'
                 $uri .= (false === strpos($uri, '?')) ? '?' : '&';
 
-                $uri .= http_build_query($result['body'], null, '&', PHP_QUERY_RFC3986);
+                $uri .= http_build_query($result['body'], '', '&', PHP_QUERY_RFC3986);
                 $result['body'] = null;
             }
 
@@ -117,7 +125,6 @@ class Builder
             $operation = $this->service->getOperation($command->getName());
             $this->processResponseError($operation ?: [], $request, $response);
             if ('rest_json' === $operation['responseProtocol']) {
-
                 $body = GuzzleHttp\json_decode($response->getBody(), true);
 
                 $result = $this->transformData($command, $body, $operation, 'response');
@@ -464,7 +471,7 @@ class Builder
             case '!==':
                 return $responseCode !== $code;
             case '!=':
-                return $responseCode != $code;
+                return $responseCode !== $code;
             case '<':
                 return $responseCode < $code;
             case '<=':
@@ -474,7 +481,7 @@ class Builder
             case '>':
                 return $responseCode > $code;
             default:
-                return $responseCode == $code;
+                return $responseCode === $code;
         }
     }
 }

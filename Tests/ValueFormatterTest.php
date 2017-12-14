@@ -1,10 +1,20 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of indragunawan/rest-service package.
+ *
+ * (c) Indra Gunawan <hello@indra.my.id>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace IndraGunawan\RestService\Tests;
 
 use IndraGunawan\RestService\ValueFormatter;
+use PHPUnit\Framework\TestCase;
 
-class ValueFormatterTest extends \PHPUnit_Framework_TestCase
+class ValueFormatterTest extends TestCase
 {
     public function testEmptyValueChecker()
     {
@@ -18,27 +28,27 @@ class ValueFormatterTest extends \PHPUnit_Framework_TestCase
     public function testGetValue()
     {
         $formatter = new ValueFormatter();
-        $this->assertEquals('foo', $formatter->getValue(null, 'foo'));
-        $this->assertEquals('bar', $formatter->getValue('bar', 'foo'));
+        $this->assertSame('foo', $formatter->getValue(null, 'foo'));
+        $this->assertSame('bar', $formatter->getValue('bar', 'foo'));
     }
 
     public function testFormat()
     {
         $formatter = new ValueFormatter();
-        $this->assertEquals('foo', $formatter->format('undefined', null, 'foo'));
+        $this->assertSame('foo', $formatter->format('undefined', null, 'foo'));
 
         $int = $formatter->format('integer', null, '10');
-        $this->assertEquals(10, $int);
+        $this->assertSame(10, $int);
         $this->assertInternalType('integer', $int);
 
         $float = $formatter->format('float', null, '10.1');
-        $this->assertEquals(10.1, $float);
+        $this->assertSame(10.1, $float);
         $this->assertInternalType('float', $float);
 
         $string = $formatter->format('string', null, 'foo');
-        $this->assertEquals('foo', $string);
+        $this->assertSame('foo', $string);
         $this->assertInternalType('string', $string);
-        $this->assertEquals('foo_bar', $formatter->format('string', '%s_bar', 'foo'));
+        $this->assertSame('foo_bar', $formatter->format('string', '%s_bar', 'foo'));
 
         $bool = $formatter->format('boolean', null, 'true');
         $this->assertTrue($bool);
@@ -47,13 +57,13 @@ class ValueFormatterTest extends \PHPUnit_Framework_TestCase
 
         $number = $formatter->format('number', '2|,|.', 30000.012);
         $this->assertInternalType('string', $number);
-        $this->assertEquals('30.000,01', $number);
-        $this->assertEquals('3000', $formatter->format('number', null, 3000));
+        $this->assertSame('30.000,01', $number);
+        $this->assertSame('3000', $formatter->format('number', null, 3000));
 
         $date = new \DateTime();
         $formatDate = $date->format('Y-m-d\TH:i:s\Z');
         $this->assertNull($formatter->format('datetime', null, null));
-        $this->assertEquals($formatDate, $formatter->format('datetime', 'Y-m-d\TH:i:s\Z', $date));
+        $this->assertSame($formatDate, $formatter->format('datetime', 'Y-m-d\TH:i:s\Z', $date));
         $this->assertInstanceOf(\DateTime::class, $formatter->format('datetime', 'Y-m-d\TH:i:s\Z', $formatDate));
         $this->assertInstanceOf(\DateTime::class, $formatter->format('datetime', null, $formatDate));
     }

@@ -1,23 +1,33 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of indragunawan/rest-service package.
+ *
+ * (c) Indra Gunawan <hello@indra.my.id>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace IndraGunawan\RestService\Tests\Validator;
 
+use IndraGunawan\RestService\Exception\InvalidSpecificationException;
 use IndraGunawan\RestService\Parser\SpecificationParser;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
-class SpecificationParserTest extends \PHPUnit_Framework_TestCase
+class SpecificationParserTest extends TestCase
 {
     public function tearDown()
     {
         \Mockery::close();
     }
 
-    /**
-     * @expectedException \IndraGunawan\RestService\Exception\InvalidSpecificationException
-     * @expectedExceptionMessage The child node "endpoint" at path "rest_service" must be configured.
-     */
     public function testInvalidSpecification()
     {
+        $this->expectException(InvalidSpecificationException::class);
+        $this->expectExceptionMessage('The child node "endpoint" at path "rest_service" must be configured.');
+
         $specification = [
             'endpoint' => '{endpoint}',
         ];
@@ -39,11 +49,10 @@ class SpecificationParserTest extends \PHPUnit_Framework_TestCase
         $specificationParser->parse(__DIR__.'/../fixtures/api-specification.php');
     }
 
-    /**
-     * @expectedException \IndraGunawan\RestService\Exception\InvalidSpecificationException
-     */
     public function testInvalidParseDefault()
     {
+        $this->expectException(InvalidSpecificationException::class);
+
         $specification = [
             'endpoint' => '{endpoint}',
             'defaults' => [
@@ -75,11 +84,10 @@ class SpecificationParserTest extends \PHPUnit_Framework_TestCase
         $specificationParser->parse(__DIR__.'/../fixtures/api-specification.php', ['userKey' => 'foobar']);
     }
 
-    /**
-     * @expectedException \IndraGunawan\RestService\Exception\InvalidSpecificationException
-     */
     public function testDefaultNotValid()
     {
+        $this->expectException(InvalidSpecificationException::class);
+
         $specification = [
             'endpoint' => '{endpoint}',
             'defaults' => [

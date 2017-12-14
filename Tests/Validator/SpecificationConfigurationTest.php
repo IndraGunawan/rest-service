@@ -1,21 +1,31 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of indragunawan/rest-service package.
+ *
+ * (c) Indra Gunawan <hello@indra.my.id>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace IndraGunawan\RestService\Tests\Validator;
 
 use IndraGunawan\RestService\Validator\SpecificationConfiguration;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 
 /**
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
  */
-class SpecificationConfigurationTest extends \PHPUnit_Framework_TestCase
+class SpecificationConfigurationTest extends TestCase
 {
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     */
     public function testInvalidConfiguration()
     {
+        $this->expectException(InvalidConfigurationException::class);
+
         $specificationArray = [];
         $processor = new Processor();
         $specification = $processor->processConfiguration(
@@ -45,17 +55,16 @@ class SpecificationConfigurationTest extends \PHPUnit_Framework_TestCase
             $specificationArray
         );
 
-        $this->assertEquals('http://httpbin.org', $specification['endpoint']);
-        $this->assertEquals('Foo Rest Service', $specification['name']);
-        $this->assertEquals(1, count($specification['operations']));
+        $this->assertSame('http://httpbin.org', $specification['endpoint']);
+        $this->assertSame('Foo Rest Service', $specification['name']);
+        $this->assertSame(1, count($specification['operations']));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Unrecognized option "shape"
-     */
     public function testInvalidShape()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Unrecognized option "shape"');
+
         $specificationArray = [
             'rest_service' => [
                 'endpoint' => 'http://httpbin.org',
@@ -116,14 +125,15 @@ class SpecificationConfigurationTest extends \PHPUnit_Framework_TestCase
             new SpecificationConfiguration(),
             $specificationArray
         );
+
+        $this->assertSame(2, count($specification['shapes']));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Unrecognized option "errorShape"
-     */
     public function testInvalidErrorShape()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Unrecognized option "errorShape"');
+
         $specificationArray = [
             'rest_service' => [
                 'endpoint' => 'http://httpbin.org',
@@ -177,5 +187,7 @@ class SpecificationConfigurationTest extends \PHPUnit_Framework_TestCase
             new SpecificationConfiguration(),
             $specificationArray
         );
+
+        $this->assertSame(1, count($specification['errorShapes']));
     }
 }

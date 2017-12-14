@@ -1,4 +1,13 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of indragunawan/rest-service package.
+ *
+ * (c) Indra Gunawan <hello@indra.my.id>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace IndraGunawan\RestService\Parser;
 
@@ -25,7 +34,7 @@ class SpecificationParser
      */
     public function parse($specificationFile, array $defaults = [], $cacheDir = null, $debug = true)
     {
-        $cachePath = null === $cacheDir ? null : $cacheDir.'/restService_'.md5(serialize($defaults).$specificationFile);
+        $cachePath = null === $cacheDir ? '' : $cacheDir.'/restService_'.md5(serialize($defaults).$specificationFile);
 
         $restServiceCache = new ConfigCache($cachePath, $debug);
         if (false === $restServiceCache->isFresh()) {
@@ -46,7 +55,9 @@ class SpecificationParser
                     $specification['errorShapes']
                 );
 
-                $restServiceCache->write(sprintf('<?php return %s;', var_export($specification, true)), [new FileResource($specificationFile)]);
+                if ($restServiceCache->getPath()) {
+                    $restServiceCache->write(sprintf('<?php return %s;', var_export($specification, true)), [new FileResource($specificationFile)]);
+                }
 
                 return $specification;
             } catch (\Exception $e) {

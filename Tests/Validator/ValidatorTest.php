@@ -1,15 +1,25 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of indragunawan/rest-service package.
+ *
+ * (c) Indra Gunawan <hello@indra.my.id>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace IndraGunawan\RestService\Tests\Validator;
 
 use IndraGunawan\RestService\Exception\ValidatorException;
 use IndraGunawan\RestService\Validator\Validator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
  */
-class ValidatorTest extends \PHPUnit_Framework_TestCase
+class ValidatorTest extends TestCase
 {
     public function setUp()
     {
@@ -31,7 +41,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $validator->add('RestService[website]', ['rule' => 'url', 'defaultValue' => 'http://example.com'], '');
         $validator->isValid();
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'RestService[email]' => 'required | email',
                 'RestService[website]' => 'url',
@@ -39,7 +49,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             $validator->getRules()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'RestService[email]' => 'mail@example.com',
                 'RestService[website]' => 'http://example.com',
@@ -60,7 +70,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'RestService[email]' => 'required | email',
                 'RestService[website]' => 'url',
@@ -68,7 +78,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
             $validator->getRules()
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'RestService' => [
                     'email' => 'newmail@example.com',
