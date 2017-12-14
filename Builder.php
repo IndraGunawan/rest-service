@@ -89,7 +89,7 @@ class Builder
             }
 
             if ($result['query']) {
-                $uri .= sprintf('?%s', http_build_query($result['query'], null, '&', PHP_QUERY_RFC3986));
+                $uri .= sprintf('?%s', http_build_query($result['query'], '', '&', PHP_QUERY_RFC3986));
             }
 
             // GET method has no body, concat to uri

@@ -2,7 +2,7 @@ RestService
 ===========
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/indragunawan/rest-service/blob/master/LICENSE)
-[![Travis](https://img.shields.io/travis/indragunawan/rest-service.svg?style=flat-square)](https://travis-ci.org/IndraGunawan/rest-service)
+[![Travis](https://img.shields.io/travis/indragunawan/rest-service.svg?style=flat-square)](https://api.travis-ci.org/IndraGunawan/rest-service.svg?branch=master)
 [![Scrutinizer](https://img.shields.io/scrutinizer/g/indragunawan/rest-service.svg?style=flat-square)](https://scrutinizer-ci.com/g/indragunawan/rest-service)
 [![Scrutinizer Coverage](https://img.shields.io/scrutinizer/coverage/g/indragunawan/rest-service.svg?style=flat-square)](https://scrutinizer-ci.com/g/indragunawan/rest-service/code-structure)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/8d1ecd53-bef1-4cca-b598-512676a54f58/small.png)](https://insight.sensiolabs.com/projects/8d1ecd53-bef1-4cca-b598-512676a54f58)
